@@ -1,0 +1,26 @@
+{
+  "name": "why-people-do-that-studio",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "still": "remotion still src/index.ts",
+    "render": "remotion render src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "tts:setup": "bash tools/tts/setup.sh",
+    "sheet:mika": "node tools/sheets/build.mjs src/renders/mika-sheet.tsx out && node tools/sheets/shot.cjs out/mika-sheet.html out/mika-sheet.png 2400 1500",
+    "sheet:cast": "node tools/sheets/build.mjs src/renders/cast.tsx out && node tools/sheets/shot.cjs out/cast.html out/cast.png 2400 1500",
+    "sheet:sets": "node tools/sheets/build.mjs src/renders/scenes.tsx out && node tools/sheets/shot.cjs out/bedroom-916.html out/bedroom-916.png 1080 1920 && node tools/sheets/shot.cjs out/bedroom-169.html out/bedroom-169.png 1920 1080"
+  },
+  "dependencies": {
+    "@fontsource/bangers": "5.1.1",
+    "@remotion/cli": "4.0.290",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.290"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "5.6.3"
+  }
+}
