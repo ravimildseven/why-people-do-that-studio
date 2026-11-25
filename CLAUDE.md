@@ -36,7 +36,7 @@ each with **one verified psychology fact**. Read `README.md`, `CHARACTER-GUIDE.m
 ## How to work here
 - **Look at what you make.** Render stills at key frames and inspect them before rendering video. Check for props
   touching heads, hands touching furniture, text in the safe area, and hidden brows.
-- After rendering, check the file with `ffprobe` (size, fps, duration, audio) and normalise loudness to about -14 LUFS.
+- After rendering, check the file with `ffprobe` (size, fps, duration, audio) and normalise loudness to about -14 LUFS, and keep the audio at 48 kHz (`-ar 48000`): loudnorm resamples up, and phones may play a 96 kHz track as silence.
 - `npx tsc --noEmit` must pass. `out/` is not committed.
 
 ## Status (keep current)

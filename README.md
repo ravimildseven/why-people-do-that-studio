@@ -41,7 +41,8 @@ npm run still -- S01-Bedtime out/check.png --frame=300
 npm run render -- S01-Bedtime out/S01.mp4 --crf=18
 
 # 4. loudness for Shorts (≈ -14 LUFS)
-ffmpeg -i out/S01.mp4 -c:v copy -af "loudnorm=I=-14:TP=-1.5:LRA=11" -c:a aac -b:a 192k out/S01-final.mp4
+ffmpeg -i out/S01.mp4 -c:v copy -af "loudnorm=I=-14:TP=-1.5:LRA=11" -ar 48000 -c:a aac -b:a 192k -movflags +faststart out/S01-final.mp4
+# -ar 48000 matters: loudnorm resamples to 192 kHz, and many phones play a 96 kHz track as silence
 ```
 Voices tried for Mika: `af_heart` (current), `af_bella`, `bf_emma` (British), `hf_alpha` (Indian accent).
 
