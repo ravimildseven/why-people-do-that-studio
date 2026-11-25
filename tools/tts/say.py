@@ -1,5 +1,6 @@
 # usage: python say.py <outdir> <voice> <speed> <id=text> [<id=text> ...]
-# Writes <id>.wav per line (trimmed), plus <id>.json with per-frame (30 fps) mouth openness 0..1.
+# Writes <id>.wav per line (trimmed), and adds each line to <outdir>/lines.json with per-frame (30 fps) mouth openness 0..1.
+# Run once per character voice into the same folder: lines are merged, not replaced.
 import json, os, sys
 import numpy as np
 import soundfile as sf
@@ -10,7 +11,9 @@ out, voice, speed = sys.argv[1], sys.argv[2], float(sys.argv[3])
 os.makedirs(out, exist_ok=True)
 k = Kokoro(os.path.join(HERE, 'models/kokoro-v1.0.onnx'), os.path.join(HERE, 'models/voices-v1.0.bin'))
 FPS = 30
-meta = {}
+# merge into an existing lines.json, so different voices (one call per character) can share one folder
+meta_path = os.path.join(out, 'lines.json')
+meta = json.load(open(meta_path)) if os.path.exists(meta_path) else {}
 for arg in sys.argv[4:]:
     lid, text = arg.split('=', 1)
     lang = 'en-us'
@@ -28,5 +31,5 @@ for arg in sys.argv[4:]:
     env = np.clip((rms / rms.max() - 0.12) / 0.6, 0, 1)
     meta[lid] = {'seconds': round(len(samples) / sr, 3), 'frames': n, 'mouth': [round(float(x), 3) for x in env]}
     print(lid, meta[lid]['seconds'], 's')
-with open(os.path.join(out, 'lines.json'), 'w') as f:
+with open(meta_path, 'w') as f:
     json.dump(meta, f)

@@ -42,7 +42,7 @@ export type Look = {
 };
 
 export type Expression = 'neutral' | 'curious' | 'tired' | 'sideEye' | 'guilty' | 'shocked' | 'happy' | 'scrollZombie';
-export type Pose = 'rest' | 'phone' | 'shrug' | 'think' | 'wave';
+export type Pose = 'rest' | 'phone' | 'shrug' | 'think' | 'wave' | 'stretch' | 'point';
 
 type Face = {
   lid: [number, number];
@@ -69,13 +69,17 @@ export const FACES: Record<Expression, Face> = {
   scrollZombie: {lid: [0.38, 0.38], lidTilt: [0, 0], look: [0, 0.7], pupil: 9, brow: [4, 0, 4, 0], mouth: 'slack', bags: true, glow: true},
 };
 
-export type Arm = {upper: number; fore: number; hand: 'open' | 'phone' | 'palm' | 'fist'};
+export type Arm = {upper: number; fore: number; hand: 'open' | 'phone' | 'palm' | 'fist' | 'point'};
 export const POSES: Record<Pose, {L: Arm; R: Arm}> = {
   rest: {L: {upper: 12, fore: 6, hand: 'open'}, R: {upper: 12, fore: 6, hand: 'open'}},
   phone: {L: {upper: 6, fore: -150, hand: 'phone'}, R: {upper: 12, fore: 4, hand: 'open'}},
   shrug: {L: {upper: 32, fore: 112, hand: 'palm'}, R: {upper: 32, fore: 112, hand: 'palm'}},
   think: {L: {upper: 12, fore: 6, hand: 'open'}, R: {upper: -30, fore: -172, hand: 'fist'}},
   wave: {L: {upper: 12, fore: 6, hand: 'open'}, R: {upper: 118, fore: 168, hand: 'open'}},
+  // both arms up over the head (a big yawn-stretch)
+  stretch: {L: {upper: 150, fore: 168, hand: 'fist'}, R: {upper: 150, fore: 168, hand: 'fist'}},
+  // right hand in front of the chest, finger at the camera
+  point: {L: {upper: 12, fore: 6, hand: 'open'}, R: {upper: 24, fore: -140, hand: 'point'}},
 };
 
 const DEFAULT_HEAD = {a: 120, b: 114, n: 2.7};
@@ -274,6 +278,17 @@ const Hand: React.FC<{side: -1 | 1; arm: Arm; x: number; y: number; ang: number;
       </g>
     );
   }
+  if (arm.hand === 'point') {
+    // pointing straight at the viewer: a fist with the index finger coming toward the camera (foreshortened)
+    return (
+      <g transform={`translate(${x} ${y})`}>
+        <ellipse cx={0} cy={10} rx={22} ry={20} fill={skin} stroke={INK} strokeWidth={OUT} />
+        <path d="M -12 18 Q 0 24 12 18" fill="none" stroke={INK} strokeWidth={4} strokeLinecap="round" />
+        <circle cx={-2 * side} cy={-12} r={13} fill={skin} stroke={INK} strokeWidth={OUT} />
+        <ellipse cx={-2 * side} cy={-16} rx={6} ry={4} fill={skinShade} />
+      </g>
+    );
+  }
   if (arm.hand === 'fist') {
     return (
       <g transform={`translate(${x} ${y}) rotate(${deg})`}>
@@ -377,9 +392,15 @@ export type PersonProps = {
   blink?: number;
   /** explicit arm angles, e.g. interpolated between two poses */
   arms?: {L: Arm; R: Arm};
+  /** 0..1 yawn: eyes squeeze shut, brows lift, head tips back, mouth opens wide. Overrides talk and expression mouth. */
+  yawn?: number;
+  /** overrides the expression's gaze, [-1..1, -1..1] (x: -1 = screen left) */
+  lookAt?: [number, number];
+  /** 0..1 glasses slide down the nose (only for looks with glasses) */
+  glassesDrop?: number;
 };
 
-export const Person: React.FC<PersonProps> = ({look: L, expression = 'neutral', pose = 'rest', idPrefix, sit, headOnly, silhouette, talk = 0, blink = 0, arms}) => {
+export const Person: React.FC<PersonProps> = ({look: L, expression = 'neutral', pose = 'rest', idPrefix, sit, headOnly, silhouette, talk = 0, blink = 0, arms, yawn = 0, lookAt, glassesDrop = 0}) => {
   const H = L.head ?? DEFAULT_HEAD;
   const f = FACES[expression];
   const P = arms ?? POSES[pose];
@@ -393,9 +414,11 @@ export const Person: React.FC<PersonProps> = ({look: L, expression = 'neutral', 
   const headPath = toPath(superellipse(0, cy, H.a, H.b, H.n));
   const eyeY = cy + 2;
   const eyeX = 46;
-  const browY = cy - 46;
+  const browY = cy - 46 - yawn * 14;
   const lidB = L.lidBase ?? 0;
-  const lid = (v: number) => Math.max(Math.min(0.9, v + lidB), blink);
+  const lid = (v: number) => Math.max(Math.min(0.9, v + lidB), blink, yawn > 0.05 ? Math.min(1, yawn * 1.15) : 0);
+  const gaze = lookAt ?? f.look;
+  const gy = glassesDrop * 26; // how far the glasses have slid down
   const browColor = L.browColor ?? L.hairColor;
   const skirt = L.bottomStyle === 'longSkirt';
   const footX = sit ? 44 : 34;
@@ -434,7 +457,7 @@ export const Person: React.FC<PersonProps> = ({look: L, expression = 'neutral', 
   ) : null;
 
   const head = (
-    <g>
+    <g transform={`translate(0 ${-yawn * 10})`}>
       {hairBack(L, H)}
       {[-1, 1].map((s) => (
         <g key={'e' + s}>
@@ -454,23 +477,28 @@ export const Person: React.FC<PersonProps> = ({look: L, expression = 'neutral', 
       {f.glow && <path d={headPath} fill={`url(#${idPrefix}-glow)`} opacity={0.4} />}
       {hairFront(L, H)}
       {f.blush && [-1, 1].map((s) => <ellipse key={'b' + s} cx={s * 74} cy={cy + 46} rx={20} ry={11} fill={L.blush} opacity={0.5} />)}
-      <Eye id={`${idPrefix}-el`} cx={-eyeX} cy={eyeY} lid={lid(f.lid[0])} tilt={f.lidTilt[0]} look={f.look} pupil={f.pupil} happy={f.happyEyes && blink < 0.5} skin={L.skin} />
-      <Eye id={`${idPrefix}-er`} cx={eyeX} cy={eyeY} lid={lid(f.lid[1])} tilt={f.lidTilt[1]} look={f.look} pupil={f.pupil} happy={f.happyEyes && blink < 0.5} skin={L.skin} />
+      <Eye id={`${idPrefix}-el`} cx={-eyeX} cy={eyeY} lid={lid(f.lid[0])} tilt={f.lidTilt[0]} look={gaze} pupil={f.pupil} happy={f.happyEyes && blink < 0.5} skin={L.skin} />
+      <Eye id={`${idPrefix}-er`} cx={eyeX} cy={eyeY} lid={lid(f.lid[1])} tilt={f.lidTilt[1]} look={gaze} pupil={f.pupil} happy={f.happyEyes && blink < 0.5} skin={L.skin} />
       {f.bags && [-1, 1].map((s) => (
         <path key={'g' + s} d={`M ${s * eyeX - 18} ${eyeY + 40} Q ${s * eyeX} ${eyeY + 50} ${s * eyeX + 18} ${eyeY + 40}`} fill="none" stroke={L.skinShade} strokeWidth={5} strokeLinecap="round" />
       ))}
       {L.glasses && (
         <g>
-          {[-1, 1].map((s) => <circle key={'gl' + s} cx={s * eyeX} cy={eyeY} r={38} fill="#ffffff" fillOpacity={0.1} stroke={INK} strokeWidth={OUT} />)}
-          <path d={`M -10 ${eyeY - 6} Q 0 ${eyeY - 14} 10 ${eyeY - 6}`} fill="none" stroke={INK} strokeWidth={OUT} strokeLinecap="round" />
-          {[-1, 1].map((s) => <line key={'ga' + s} x1={s * 84} y1={eyeY - 6} x2={s * (H.a - 6)} y2={eyeY - 12} stroke={INK} strokeWidth={OUT} strokeLinecap="round" />)}
+          {[-1, 1].map((s) => <circle key={'gl' + s} cx={s * eyeX} cy={eyeY + gy} r={38} fill="#ffffff" fillOpacity={0.1} stroke={INK} strokeWidth={OUT} />)}
+          <path d={`M -10 ${eyeY - 6 + gy} Q 0 ${eyeY - 14 + gy} 10 ${eyeY - 6 + gy}`} fill="none" stroke={INK} strokeWidth={OUT} strokeLinecap="round" />
+          {[-1, 1].map((s) => <line key={'ga' + s} x1={s * 84} y1={eyeY - 6 + gy} x2={s * (H.a - 6)} y2={eyeY - 12} stroke={INK} strokeWidth={OUT} strokeLinecap="round" />)}
         </g>
       )}
       <Brow cx={-eyeX} y={browY + f.brow[0]} tilt={f.brow[1]} side={-1} color={browColor} />
       <Brow cx={eyeX} y={browY + f.brow[2]} tilt={f.brow[3]} side={1} color={browColor} />
       {L.bindi && <circle cx={0} cy={cy - 40} r={6} fill="#c0392b" stroke={INK} strokeWidth={2} />}
       <path d={`M -6 ${cy + 36} Q 2 ${cy + 44} 10 ${cy + 34}`} fill="none" stroke={L.skinShade} strokeWidth={6} strokeLinecap="round" />
-      {talk > 0.04 ? (
+      {yawn > 0.05 ? (
+        <g>
+          <ellipse cx={0} cy={cy + 66 + yawn * 10} rx={16 + yawn * 12} ry={6 + yawn * 22} fill={MOUTH_DARK} stroke={INK} strokeWidth={OUT} />
+          {yawn > 0.4 && <ellipse cx={0} cy={cy + 66 + yawn * 22} rx={8 + yawn * 6} ry={3 + yawn * 5} fill="#e8838a" />}
+        </g>
+      ) : talk > 0.04 ? (
         <g>
           <ellipse cx={0} cy={cy + 70} rx={15 + talk * 6} ry={5 + talk * 15} fill={MOUTH_DARK} stroke={INK} strokeWidth={OUT} />
           {talk > 0.35 && <ellipse cx={0} cy={cy + 70 + talk * 9} rx={8 + talk * 3} ry={3 + talk * 4} fill="#e8838a" />}
