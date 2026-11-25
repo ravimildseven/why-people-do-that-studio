@@ -7,7 +7,7 @@ import {HookCard, Caption, FactCard, ClockChip} from '../kit/Overlays';
 import lines from '../../public/vo/s02/lines.json';
 
 // Short S02 — "One yawn. Whole house."  (episodes/s02-yawns/SCRIPT.md)
-// Contagious yawning. Same night bedroom as S01, cast of three.
+// Contagious yawning. Same night bedroom as S01, cast of three, cut close: each yawn gets its own close-up.
 // All timing lives in T and is built from the voice line lengths (lines.json), so a re-voiced line re-times itself.
 
 type LineId = 'L1' | 'L2' | 'L3' | 'L4';
@@ -16,24 +16,29 @@ const len = (id: LineId) => LINES[id].frames;
 
 const YAWN = 52; // frames per yawn: open, hold, close
 
+// The cut: close-ups, face to face. Each yawn is caught in its own shot.
 const T = (() => {
-  const devYawn = 12;
+  const devYawn = 2; // hook: the first thing on screen is Dev's yawn, big
   const L1 = devYawn + YAWN - 4;
-  const fight = L1 + len('L1') + 6; // Mika tries not to
-  const mikaYawn = fight + 30;
+  const cut1 = L1 + len('L1') + 4; // cut to Mika, watching
+  const fight = cut1 + 14; // she tries not to
+  const mikaYawn = fight + 26;
   const L2 = mikaYawn + YAWN - 6;
-  const cut = L2 + len('L2') + 14; // 10:31, cut to the wide shot: Aaji is there
-  const aajiYawn = cut + 12;
+  const cut2 = L2 + len('L2') + 10; // 10:31, cut to Aaji
+  const aajiYawn = cut2 + 6;
   const L3 = aajiYawn + YAWN - 2;
-  const fact = L3 + len('L3') + 10;
+  const fact = L3 + len('L3') + 8; // side-eye ping-pong under the fact card
+  const eyeDev = fact + 54;
+  const eyeMika = eyeDev + 32;
+  const eyeAaji = eyeMika + 32;
   const factEnd = fact + 150;
-  const jump2 = factEnd + 4; // 10:32, push in on Mika
-  const point = jump2 + 8;
-  const L4 = jump2 + 20;
-  const devAgain = L4 + len('L4') + 6; // the button: it starts again
-  const mikaAgain = devAgain + 22;
-  const end = mikaAgain + YAWN + 16;
-  return {devYawn, L1, fight, mikaYawn, L2, cut, aajiYawn, L3, fact, factEnd, jump2, point, L4, devAgain, mikaAgain, end};
+  const jump2 = factEnd + 4; // 10:32, Mika straight down the lens
+  const point = jump2 + 6;
+  const L4 = jump2 + 16;
+  const hold = L4 + len('L4') + 6; // she holds it...
+  const mikaAgain = hold + 22; // ...and cracks
+  const end = mikaAgain + YAWN + 14;
+  return {devYawn, L1, cut1, fight, mikaYawn, L2, cut2, aajiYawn, L3, fact, eyeDev, eyeMika, eyeAaji, factEnd, jump2, point, L4, hold, mikaAgain, end};
 })();
 export const S02_DURATION = T.end;
 
@@ -41,11 +46,12 @@ const TEXT: Record<LineId, {text: string; hi: string}> = {
   L1: {text: 'Sorry. Long day.', hi: 'Long'},
   L2: {text: "I wasn't even tired!", hi: 'tired!'},
   L3: {text: 'Who started this?', hi: 'started'},
-  L4: {text: 'Did you just yawn too?', hi: 'you'},
+  L4: {text: "Okay. Don't yawn. I dare you.", hi: 'dare'},
 };
 
-// stage positions (character units, 0 = centre of the set)
+// stage positions (character units, 0 = centre of the set) and face centres (seated heads sit 40 lower)
 const X = {dev: -210, mika: 50, aaji: 300};
+const FACE = {dev: [X.dev, -426], mika: [X.mika, -426], aaji: [X.aaji, -442]} as const;
 
 const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -64,11 +70,35 @@ function blinkAt(frame: number, offset: number) {
   return cyc >= 80 ? [0.6, 1, 1, 0.5][cyc - 80] : 0;
 }
 
-// camera: offset (px) of the floor point + zoom. Clamped so the set always fills the frame.
-type Cam = {x: number; y: number; z: number};
-const TWO: Cam = {x: 100, y: 0, z: 1.25}; // Dev + Mika
-const WIDE: Cam = {x: -76, y: 0, z: 1.12}; // all three
-const MIKA_CU: Cam = {x: -125, y: 70, z: 1.3}; // Mika close-up, a little left of centre so Aaji's face stays clear of the right edge
+// camera: a world point (wx, wy) placed at screen point (sx, sy) at zoom z
+type Cam = {wx: number; wy: number; z: number; sy?: number};
+const on = (who: keyof typeof FACE, z: number, dx = 0, dy = 0, sy = 800): Cam => ({wx: FACE[who][0] + dx, wy: FACE[who][1] + dy, z, sy});
+const mixCam = (a: Cam, b: Cam, t: number): Cam => ({wx: lerp(a.wx, b.wx, t), wy: lerp(a.wy, b.wy, t), z: lerp(a.z, b.z, t), sy: lerp(a.sy ?? 800, b.sy ?? 800, t)});
+/** a shot: from cam a at frame f0, easing to cam b by frame f1 */
+const move = (frame: number, f0: number, f1: number, a: Cam, b: Cam) => mixCam(a, b, ease(interpolate(frame, [f0, f1], [0, 1], clamp)));
+
+function cameraAt(frame: number): Cam {
+  // 1. Dev: extreme close-up on the yawn, easing out to a close-up for his line
+  if (frame < T.cut1) return move(frame, T.devYawn + YAWN * 0.6, T.L1 + 10, on('dev', 2.7, 0, 30), on('dev', 2.1, 0, -10));
+  // 2. Mika: close-up while she watches, slow push in while she fights it, tight on the yawn
+  if (frame < T.cut2) {
+    if (frame < T.mikaYawn + YAWN) return move(frame, T.fight, T.mikaYawn + 20, on('mika', 1.9, -40, -10), on('mika', 2.8, 0, 30));
+    return move(frame, T.mikaYawn + YAWN, T.mikaYawn + YAWN + 8, on('mika', 2.8, 0, 30), on('mika', 2.1, 0, -10));
+  }
+  // 3. Aaji: close-up, then a push in on her glasses as they slide
+  if (frame < T.fact) {
+    if (frame < T.L3) return move(frame, T.aajiYawn + 8, T.aajiYawn + 30, on('aaji', 2.0, 0, -10), on('aaji', 3.1, 0, 4, 760));
+    return move(frame, T.L3, T.L3 + 12, on('aaji', 3.1, 0, 4, 760), on('aaji', 2.5, 0, 0));
+  }
+  // 4. fact card: all three, heads big, then quick side-eye cuts
+  if (frame < T.eyeDev) return {wx: 45, wy: -430, z: 1.55, sy: 760};
+  if (frame < T.eyeMika) return on('dev', 2.3, 0, 0, 760);
+  if (frame < T.eyeAaji) return on('mika', 2.3, 0, 0, 760);
+  if (frame < T.jump2) return on('aaji', 2.3, 0, 0, 760);
+  // 5. Mika, straight down the lens, creeping in, then tight on the final yawn
+  if (frame < T.mikaAgain) return move(frame, T.jump2, T.hold + 20, on('mika', 2.2, 0, 20, 780), on('mika', 2.6, 0, 20, 790));
+  return move(frame, T.mikaAgain, T.mikaAgain + 22, on('mika', 2.6, 0, 20, 790), on('mika', 3.0, 0, 40, 800));
+}
 
 export const S02Yawns: React.FC = () => {
   const frame = useCurrentFrame();
@@ -85,14 +115,14 @@ export const S02Yawns: React.FC = () => {
   });
 
   // ---- yawns
-  const yDev = Math.max(yawnAt(frame, T.devYawn), yawnAt(frame, T.devAgain));
+  const yDev = yawnAt(frame, T.devYawn);
   const yMika = Math.max(yawnAt(frame, T.mikaYawn), yawnAt(frame, T.mikaAgain));
   const yAaji = yawnAt(frame, T.aajiYawn);
 
   // ---- clock
-  const clock = frame < T.cut + 5 ? '10:30 PM' : frame < T.jump2 + 5 ? '10:31 PM' : '10:32 PM';
+  const clock = frame < T.cut2 + 5 ? '10:30 PM' : frame < T.jump2 + 5 ? '10:31 PM' : '10:32 PM';
   const flip = (j: number) => interpolate(frame, [j, j + 5, j + 10], [1, 0, 1], clamp);
-  const clockFlip = Math.min(flip(T.cut), flip(T.jump2));
+  const clockFlip = Math.min(flip(T.cut2), flip(T.jump2));
 
   // ---- Dev: sits on the edge of the bed; stretches with the yawn
   let devExp: Expression = 'tired';
@@ -101,19 +131,16 @@ export const S02Yawns: React.FC = () => {
     devExp = 'neutral';
     devLook = [0.9, 0]; // watches Mika
   }
-  if (frame >= T.cut) devLook = [0.9, -0.1];
+  if (frame >= T.cut2) devLook = [0.9, -0.1];
   if (frame >= T.fact) {
     devExp = 'sideEye';
-    devLook = [1, 0.1];
+    devLook = frame < T.eyeDev ? [1, 0.1] : [1, 0.05];
   }
   if (frame >= T.jump2) {
     devExp = 'tired';
     devLook = undefined;
   }
-  const devStretch = Math.max(
-    interpolate(frame - T.devYawn, [0, 16, YAWN - 12, YAWN], [0, 1, 1, 0], clamp),
-    interpolate(frame - T.devAgain, [0, 16, YAWN - 12, YAWN], [0, 1, 1, 0], clamp),
-  );
+  const devStretch = interpolate(frame - T.devYawn, [0, 16, YAWN - 12, YAWN], [0, 1, 1, 0], clamp);
   // one-arm stretch, out to the side: Mika sits too close for both arms
   const DEV_STRETCH: Arm = {upper: 138, fore: 162, hand: 'fist'};
   const devArms = {
@@ -121,10 +148,10 @@ export const S02Yawns: React.FC = () => {
     R: POSES.rest.R,
   };
 
-  // ---- Mika: wide awake -> watches Dev -> fights it -> yawns anyway -> points at you -> yawns again
+  // ---- Mika: watches Dev -> fights it -> yawns anyway -> dares you -> fights it -> yawns again
   let mikaExp: Expression = 'neutral';
   let mikaLook: [number, number] | undefined;
-  if (frame >= T.devYawn + 6) {
+  if (frame >= T.cut1) {
     mikaExp = 'curious';
     mikaLook = [-0.9, -0.2]; // looks over at Dev
   }
@@ -134,33 +161,29 @@ export const S02Yawns: React.FC = () => {
   }
   if (frame >= T.mikaYawn) mikaLook = undefined;
   if (frame >= T.L2) mikaExp = 'shocked';
-  if (frame >= T.cut) {
+  if (frame >= T.cut2) {
     mikaExp = 'neutral';
     mikaLook = [0.9, -0.2]; // looks at Aaji
   }
   if (frame >= T.fact) {
     mikaExp = 'sideEye';
-    // glances left, then right
-    mikaLook = frame < T.fact + 70 ? [-1, 0.1] : [1, 0.1];
+    // in her own cut she glances left, then right
+    mikaLook = frame < T.eyeMika + 16 ? [-1, 0.1] : [1, 0.1];
   }
   if (frame >= T.jump2) {
     mikaExp = 'curious';
-    mikaLook = [0, 0]; // straight at the viewer
+    mikaLook = [0, 0]; // straight down the lens
   }
-  if (frame >= T.L4 + len('L4')) mikaExp = 'happy';
-  if (frame >= T.devAgain + 4) {
-    mikaExp = 'sideEye';
-    mikaLook = [-1, 0.1]; // ...oh no, not again
-  }
+  if (frame >= T.hold) mikaExp = 'guilty'; // ...she feels it coming
   if (frame >= T.mikaAgain) mikaLook = undefined;
-  const pointT = ease(interpolate(frame, [T.point, T.point + 10, T.devAgain, T.devAgain + 10], [0, 1, 1, 0], clamp));
+  const pointT = ease(interpolate(frame, [T.point, T.point + 10, T.hold, T.hold + 10], [0, 1, 1, 0], clamp));
   const mikaArms = {
     L: POSES.rest.L,
     R: mixArm(POSES.rest.R, POSES.point.R, pointT, pointT > 0.5 ? 'point' : 'open'),
   };
 
-  // ---- Aaji: there from the cut; yawns, glasses slide down her nose and stay there
-  const aajiOn = frame >= T.cut;
+  // ---- Aaji: there from her cut; yawns, glasses slide down her nose and stay there
+  const aajiOn = frame >= T.cut2;
   let aajiExp: Expression = 'neutral';
   let aajiLook: [number, number] | undefined = [-0.7, 0.1];
   if (frame >= T.L3) aajiExp = 'curious';
@@ -173,29 +196,20 @@ export const S02Yawns: React.FC = () => {
     aajiExp = 'tired';
     aajiLook = undefined;
   }
-  const glassesDrop = interpolate(frame, [T.aajiYawn + 10, T.aajiYawn + 24], [0, 1], {...clamp, easing: Easing.out(Easing.back(2))});
+  const glassesDrop = interpolate(frame, [T.aajiYawn + 12, T.aajiYawn + 26], [0, 1], {...clamp, easing: Easing.out(Easing.back(2))});
 
-  // ---- camera: two-shot -> (cut) wide -> slow push in on Mika for the last line
-  let cam: Cam = TWO;
-  if (frame >= T.cut) {
-    const drift = interpolate(frame, [T.cut, T.fact], [0, 0.04], clamp);
-    cam = {...WIDE, z: WIDE.z + drift};
-  }
-  if (frame >= T.jump2) {
-    const t = ease(interpolate(frame, [T.jump2, T.jump2 + 22], [0, 1], clamp));
-    const from = {...WIDE, z: WIDE.z + 0.04};
-    cam = {x: lerp(from.x, MIKA_CU.x, t), y: lerp(from.y, MIKA_CU.y, t), z: lerp(from.z, MIKA_CU.z, t)};
-    cam.z += interpolate(frame, [T.L4 + len('L4'), T.end], [0, 0.06], clamp);
-  }
-  // punch at the cut and on the point
-  const punch = (j: number, a = 0.05) => interpolate(frame, [j, j + 4, j + 14], [0, a, 0], clamp);
-  cam = {...cam, z: cam.z + punch(T.cut) + punch(T.point + 6, 0.04)};
+  // ---- camera: a world point placed at a screen point, plus a small punch on each cut
+  const c = cameraAt(frame);
+  const punch = (j: number, a = 0.06) => interpolate(frame, [j, j + 3, j + 10], [0, a, 0], clamp);
+  const cuts = [T.cut1, T.cut2, T.fact, T.eyeDev, T.eyeMika, T.eyeAaji, T.jump2];
+  const z = (c.z + cuts.reduce((acc, j) => acc + punch(j), 0) + punch(T.point + 6, 0.05)) * L.u;
   // keep the set covering the frame
-  const z = cam.z * L.u;
   const setHalf = L.hx + 10;
-  const cx = Math.min(z * setHalf - W / 2, Math.max(W / 2 - z * setHalf, cam.x));
   const top = -(L.top - 10); // set top, as a positive distance above the floor line
-  const cy = Math.min(z * top - L.feetY, Math.max(H - L.feetY - z * (L.bottom + 10), cam.y));
+  const rawX = W / 2 - c.wx * z - W / 2; // offset of the floor point from screen centre
+  const rawY = (c.sy ?? 800) - c.wy * z - L.feetY;
+  const cx = Math.min(z * setHalf - W / 2, Math.max(W / 2 - z * setHalf, rawX));
+  const cy = Math.min(z * top - L.feetY, Math.max(H - L.feetY - z * (L.bottom + 10), rawY));
 
   // ---- overlays
   const hookIn = spring({frame, fps, config: {damping: 14, stiffness: 180}, durationInFrames: 10});
@@ -212,7 +226,7 @@ export const S02Yawns: React.FC = () => {
           </g>
           <g transform={`translate(${X.mika} 0)`}>
             <Shadow w={110} opacity={0.3} />
-            <Person look={MIKA} idPrefix="m" sit arms={mikaArms} expression={mikaExp} lookAt={mikaLook} talk={talk.mika} yawn={yMika} blink={mikaExp === 'happy' ? 0 : blinkAt(frame, 0)} />
+            <Person look={MIKA} idPrefix="m" sit arms={mikaArms} expression={mikaExp} lookAt={mikaLook} talk={talk.mika} yawn={yMika} blink={blinkAt(frame, 0)} />
           </g>
           {aajiOn && (
             <g transform={`translate(${X.aaji} 0)`}>
@@ -248,12 +262,12 @@ export const S02Yawns: React.FC = () => {
           <Audio src={staticFile(`vo/s02/${id}.wav`)} />
         </Sequence>
       ))}
-      {[T.devYawn, T.mikaYawn, T.aajiYawn, T.devAgain, T.mikaAgain].map((t, i) => (
+      {[T.devYawn, T.mikaYawn, T.aajiYawn, T.mikaAgain].map((t, i) => (
         <Sequence key={'y' + i} from={t} layout="none">
           <Audio src={staticFile('sfx/yawn.wav')} volume={0.7} />
         </Sequence>
       ))}
-      <Sequence from={T.cut} layout="none"><Audio src={staticFile('sfx/whoosh.wav')} /></Sequence>
+      <Sequence from={T.cut2} layout="none"><Audio src={staticFile('sfx/whoosh.wav')} /></Sequence>
       <Sequence from={T.jump2} layout="none"><Audio src={staticFile('sfx/whoosh.wav')} volume={0.6} /></Sequence>
       <Sequence from={T.fact} layout="none"><Audio src={staticFile('sfx/ding.wav')} volume={0.5} /></Sequence>
     </AbsoluteFill>

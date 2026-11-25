@@ -8,18 +8,18 @@ The hook headline stays on screen the whole time. One fact card appears.
 ## Hook headline (top card, whole video)
 ONE YAWN. WHOLE HOUSE.
 
-## Beats
+## Beats (cut close: every yawn gets its own close-up)
 | # | Clock | Shot | Action | Line (TTS + caption) |
 |---|---|---|---|---|
-| Y1 | 10:30 PM | two-shot, Dev + Mika on the bed | Mika wide awake. Dev, on the edge of the bed, stretches and yawns huge. Mika watches | |
-| L1 | 10:30 PM | two-shot | | Dev: "Sorry. Long day." |
-| Y2 | 10:30 PM | two-shot | Mika presses her lips together, sweating, fighting it... and yawns anyway | |
-| L2 | 10:30 PM | two-shot | shocked | Mika: "I wasn't even tired!" |
-| Y3 | 10:31 PM | cut to the wide shot: Aaji is standing by the bed | Aaji yawns, her glasses slide down her nose and stay there | |
-| L3 | 10:31 PM | wide | | Aaji: "Who started this?" |
-| FACT | 10:31 PM | wide | all three side-eye each other | fact card (see below) |
-| L4 | 10:32 PM | slow push in on Mika | Mika points straight at the viewer | Mika: "Did you just yawn too?" |
-| END | 10:32 PM | close | Dev yawns again, Mika catches it again | |
+| Y1 | 10:30 PM | extreme close-up on Dev from frame 0 (the hook) | Dev stretches and yawns huge | |
+| L1 | 10:30 PM | eases out to a close-up | | Dev: "Sorry. Long day." |
+| Y2 | 10:30 PM | cut to Mika, close-up; slow push in | she watches, presses her lips together, sweating... and yawns anyway, tight | |
+| L2 | 10:30 PM | close-up | shocked | Mika: "I wasn't even tired!" |
+| Y3 | 10:31 PM | cut to Aaji, close-up; push in on her glasses | Aaji yawns, her glasses slide down her nose and stay there | |
+| L3 | 10:31 PM | close-up | | Aaji: "Who started this?" |
+| FACT | 10:31 PM | all three, heads big; then quick cuts: Dev, Mika, Aaji | side-eye ping-pong | fact card (see below) |
+| L4 | 10:32 PM | Mika straight down the lens, creeping in | points at the viewer | Mika: "Okay. Don't yawn. I dare you." |
+| END | 10:32 PM | tight on Mika | she feels it coming... and yawns | |
 
 ## Fact card (on-screen text only)
 **CONTAGIOUS YAWNING**
@@ -42,7 +42,7 @@ ONE YAWN. WHOLE HOUSE.
 
 ```bash
 tools/tts/venv/bin/python tools/tts/say.py public/vo/s02 am_michael 1.0 "L1=Sorry. Long day."
-tools/tts/venv/bin/python tools/tts/say.py public/vo/s02 af_heart 1.0 "L2=I wasn't even tired!" "L4=Did you just yawn too?"
+tools/tts/venv/bin/python tools/tts/say.py public/vo/s02 af_heart 1.0 "L2=I wasn't even tired!" "L4=Okay. Don't yawn. I dare you."
 tools/tts/venv/bin/python tools/tts/say.py public/vo/s02 hf_beta 0.92 "L3=Who started this?"
 ```
 The yawns themselves are a soft breath sound (`public/sfx/yawn.wav`, made by `tools/sfx/make-yawn.sh`), not voiced.
