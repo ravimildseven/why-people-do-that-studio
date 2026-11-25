@@ -1,7 +1,7 @@
 # Short S02: "One yawn. Whole house."
 
 **Behaviour:** catching a yawn just from seeing someone else yawn.
-**Format:** 9:16 play, about 25 s. Each character speaks a line (TTS) and a caption bar shows it.
+**Format:** 9:16 play, about 22 s. Each character speaks a line (TTS) and a caption bar shows it.
 The hook headline stays on screen the whole time. One fact card appears.
 **Set:** night bedroom (same as S01, no new set). **Cast:** Dev, Mika, Aaji.
 

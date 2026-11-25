@@ -41,6 +41,7 @@ each with **one verified psychology fact**. Read `README.md`, `CHARACTER-GUIDE.m
 
 ## Status (keep current)
 - **Done:** character rig + cast of 3, bedroom set, overlays, free TTS pipeline, Short S01 "Exhausted… but
-  still awake?" (bedtime procrastination).
-- **Open (owner):** pick Mika's voice; review S01; choose the next topics.
+  still awake?" (bedtime procrastination), Short S02 "One yawn. Whole house." (contagious yawning).
+- **Open (owner):** pick Mika's voice; confirm Dev's and Aaji's voices (first used in S02); review S01 and S02.
+- **Next topics:** S03 doorway effect (needs a kitchen set), S04 saying it out loud (needs a living room set).
 - **Open (code):** music bed; more sets (kitchen, doorway/hallway, office); side view and walk cycle; long-form template.

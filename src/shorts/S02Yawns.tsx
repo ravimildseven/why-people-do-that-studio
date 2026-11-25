@@ -68,7 +68,7 @@ function blinkAt(frame: number, offset: number) {
 type Cam = {x: number; y: number; z: number};
 const TWO: Cam = {x: 100, y: 0, z: 1.25}; // Dev + Mika
 const WIDE: Cam = {x: -76, y: 0, z: 1.12}; // all three
-const MIKA_CU: Cam = {x: -72, y: 100, z: 1.42}; // Mika close-up
+const MIKA_CU: Cam = {x: -125, y: 70, z: 1.3}; // Mika close-up, a little left of centre so Aaji's face stays clear of the right edge
 
 export const S02Yawns: React.FC = () => {
   const frame = useCurrentFrame();
@@ -114,9 +114,11 @@ export const S02Yawns: React.FC = () => {
     interpolate(frame - T.devYawn, [0, 16, YAWN - 12, YAWN], [0, 1, 1, 0], clamp),
     interpolate(frame - T.devAgain, [0, 16, YAWN - 12, YAWN], [0, 1, 1, 0], clamp),
   );
+  // one-arm stretch, out to the side: Mika sits too close for both arms
+  const DEV_STRETCH: Arm = {upper: 138, fore: 162, hand: 'fist'};
   const devArms = {
-    L: mixArm(POSES.rest.L, POSES.stretch.L, ease(devStretch), devStretch > 0.5 ? 'fist' : 'open'),
-    R: mixArm(POSES.rest.R, POSES.stretch.R, ease(devStretch), devStretch > 0.5 ? 'fist' : 'open'),
+    L: mixArm(POSES.rest.L, DEV_STRETCH, ease(devStretch), devStretch > 0.5 ? 'fist' : 'open'),
+    R: POSES.rest.R,
   };
 
   // ---- Mika: wide awake -> watches Dev -> fights it -> yawns anyway -> points at you -> yawns again
