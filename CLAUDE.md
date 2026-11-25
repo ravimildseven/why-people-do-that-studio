@@ -33,6 +33,10 @@ each with **one verified psychology fact**. Read `README.md`, `CHARACTER-GUIDE.m
   picks another. Keep one fixed voice per character.
 - vidIQ's voiceover tool also works but costs credits (28 per 1000 characters). Ask before spending them.
 
+## Music
+- Music is composed in code (`tools/music/make-music.py`) so there are no licences. `public/music/sleepy-bed.wav` is the first bed.
+  Duck it under every line (see `musicVolume` in `S02Yawns.tsx`).
+
 ## How to work here
 - **Look at what you make.** Render stills at key frames and inspect them before rendering video. Check for props
   touching heads, hands touching furniture, text in the safe area, and hidden brows.
@@ -44,4 +48,4 @@ each with **one verified psychology fact**. Read `README.md`, `CHARACTER-GUIDE.m
   still awake?" (bedtime procrastination), Short S02 "One yawn. Whole house." (contagious yawning).
 - **Open (owner):** pick Mika's voice; confirm Dev's and Aaji's voices (first used in S02); review S01 and S02.
 - **Next topics:** S03 doorway effect (needs a kitchen set), S04 saying it out loud (needs a living room set).
-- **Open (code):** music bed; more sets (kitchen, doorway/hallway, office); side view and walk cycle; long-form template.
+- **Open (code):** more sets (kitchen, doorway/hallway, office); side view and walk cycle; long-form template.

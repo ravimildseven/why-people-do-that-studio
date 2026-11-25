@@ -100,6 +100,21 @@ function cameraAt(frame: number): Cam {
   return move(frame, T.mikaAgain, T.mikaAgain + 22, on('mika', 2.6, 0, 20, 790), on('mika', 3.0, 0, 40, 800));
 }
 
+/** music level per frame: full between lines, ducked under every line, drops away when Mika gives in */
+function musicVolume(f: number) {
+  const BASE = 0.26;
+  const DUCK = 0.09 / BASE;
+  let k = 1;
+  (Object.keys(LINES) as LineId[]).forEach((id) => {
+    const d = interpolate(f, [T[id] - 6, T[id], T[id] + len(id), T[id] + len(id) + 8], [1, DUCK, DUCK, 1], clamp);
+    k = Math.min(k, d);
+  });
+  const fadeIn = interpolate(f, [0, 8], [0, 1], clamp);
+  const giveUp = interpolate(f, [T.mikaAgain, T.mikaAgain + 10], [1, 0.3], clamp);
+  const fadeOut = interpolate(f, [T.end - 15, T.end], [1, 0], clamp);
+  return BASE * k * fadeIn * giveUp * fadeOut;
+}
+
 export const S02Yawns: React.FC = () => {
   const frame = useCurrentFrame();
   const {width: W, height: H, fps} = useVideoConfig();
@@ -255,8 +270,9 @@ export const S02Yawns: React.FC = () => {
         />
       )}
 
-      {/* sound */}
-      <Audio src={staticFile('sfx/ticks.wav')} volume={0.6} />
+      {/* sound: music bed (composed in code, tools/music/make-music.py), ducked under every line */}
+      <Audio src={staticFile('music/sleepy-bed.wav')} volume={musicVolume} />
+      <Audio src={staticFile('sfx/ticks.wav')} volume={0.35} />
       {(Object.keys(LINES) as LineId[]).map((id) => (
         <Sequence key={'a' + id} from={T[id]} layout="none">
           <Audio src={staticFile(`vo/s02/${id}.wav`)} />
@@ -270,6 +286,8 @@ export const S02Yawns: React.FC = () => {
       <Sequence from={T.cut2} layout="none"><Audio src={staticFile('sfx/whoosh.wav')} /></Sequence>
       <Sequence from={T.jump2} layout="none"><Audio src={staticFile('sfx/whoosh.wav')} volume={0.6} /></Sequence>
       <Sequence from={T.fact} layout="none"><Audio src={staticFile('sfx/ding.wav')} volume={0.5} /></Sequence>
+      <Sequence from={T.L4 + len('L4')} layout="none"><Audio src={staticFile('sfx/sting-dare.wav')} volume={0.5} /></Sequence>
+      <Sequence from={T.mikaAgain + 4} layout="none"><Audio src={staticFile('sfx/slide-down.wav')} volume={0.4} /></Sequence>
     </AbsoluteFill>
   );
 };

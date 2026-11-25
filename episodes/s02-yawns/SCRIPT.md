@@ -52,3 +52,8 @@ The yawns themselves are a soft breath sound (`public/sfx/yawn.wav`, made by `to
 - `lookAt`: point the eyes somewhere other than the expression's default (characters look at each other).
 - `glassesDrop` (0..1): glasses slide down the nose.
 - `stretch` pose (both arms up) and `point` pose (finger at the camera, foreshortened).
+
+## Music and sound
+- Music bed: `public/music/sleepy-bed.wav`, composed in code by `tools/music/make-music.py` (music box, warm keys, soft bass,
+  84 BPM, F major). Nothing licensed, nothing to credit. It ducks under every spoken line and drops away when Mika gives in.
+- Stings, from the same script: `sfx/sting-dare.wav` right after the dare, `sfx/slide-down.wav` on Mika's final yawn.
