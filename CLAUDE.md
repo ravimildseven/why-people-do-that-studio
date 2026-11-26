@@ -42,7 +42,9 @@ each with **one verified psychology fact**. Read `README.md`, `CHARACTER-GUIDE.m
 ## Status (keep current)
 - **Done:** character rig + cast of 3, bedroom set, overlays, free TTS pipeline, Short S01 "Exhausted… but
   still awake?" (bedtime procrastination) in v1 (single shot), v2 (`S01v2-Bedtime`, fast-cut) v3 (`S01v3-Bedtime`, puppet play) and **v4 (`S01v4-Kinetic`, current format)**.
-- **Open (owner):** review S01 v4; choose the next topics.
+- **S02 "Why you forget names in 3 seconds"** (`S02-Names`, 36 s): next-in-line effect (Brenner 1973) → fix: say the
+  name out loud (production effect, MacLeod et al. 2010). Shared kinetic blocks live in `src/kinetic/Kit.tsx`.
+- **Open (owner):** review S02; choose the next topics.
 - **Format (owner-approved, Nov 26): POV + kinetic type with Mika as the face.** Big animated words (Inter Display,
   `src/kinetic/Design.tsx`) carry the story; graphics show the numbers; Mika appears only as close-ups and reaction
   badges (head only). One female narrator (Kokoro `af_heart`), music bed from `tools/music/bed.py`. The puppet-play
