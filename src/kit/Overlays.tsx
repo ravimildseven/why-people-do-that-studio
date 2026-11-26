@@ -9,6 +9,9 @@ import {INK} from './Person';
 const FONTS: [string, string][] = [
   ['Bangers', 'fonts/Bangers.woff2'],
   ['Baloo', 'fonts/Baloo2-Variable.ttf'],
+  ['InterBlack', 'fonts/InterDisplay-Black.otf'],
+  ['InterXB', 'fonts/InterDisplay-ExtraBold.otf'],
+  ['InterSB', 'fonts/InterDisplay-SemiBold.otf'],
 ];
 let loaded = false;
 export const useChannelFonts = () => {
