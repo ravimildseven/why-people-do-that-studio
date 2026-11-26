@@ -1,6 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {K, Background, Tag, Hero, Body, Source} from './Design';
+import {Person, Expression, INK} from '../kit/Person';
+import {MIKA} from '../cast';
 
 // Four style frames for approval (stills only): hook, problem, why, fix.
 // Composition "KineticStyle", frames 0–3 = one scene each.
@@ -163,7 +165,50 @@ const Fix: React.FC = () => (
   </AbsoluteFill>
 );
 
+// Mika's head as a cut-out: face centred at (x, y), s = scale of the rig
+const MikaHead: React.FC<{x: number; y: number; s: number; e: Expression; id: string}> = ({x, y, s, e, id}) => (
+  <g transform={`translate(${x} ${y}) scale(${s}) translate(0 468)`}>
+    <Person look={MIKA} idPrefix={id} expression={e} headOnly />
+  </g>
+);
+
+const HookWithMika: React.FC = () => (
+  <AbsoluteFill>
+    <Background glow={{x: 540, y: 1150, r: 700, color: K.blue, o: 0.45}} />
+    <svg width={1080} height={1920} style={{position: 'absolute', inset: 0}}>
+      <MikaHead x={540} y={1080} s={1.9} e="scrollZombie" id="hk" />
+      {/* the phone between us and her face: we see its back, she sees the screen */}
+      <g transform="translate(560 1470) rotate(-6)">
+        <rect x={-150} y={-300} width={300} height={600} rx={48} fill="#151829" stroke={INK} strokeWidth={10} />
+        <circle cx={-80} cy={-230} r={26} fill="#2a2f45" stroke={INK} strokeWidth={5} />
+      </g>
+      <path d="M -20 1620 C 160 1560 300 1660 520 1600 C 720 1546 880 1650 1100 1580 L 1100 1940 L -20 1940 Z" fill="#2b3370" />
+    </svg>
+    <Tag text="1:55 AM · Phone 4% · You 2%" color={K.coral} top={150} />
+    <Hero top={250} lines={[{text: 'Why are you', size: 118}, {text: 'still', size: 150, block: K.yellow}, {text: 'scrolling?', size: 132}]} />
+  </AbsoluteFill>
+);
+
+const WhyWithMika: React.FC = () => (
+  <AbsoluteFill>
+    <Background glow={{x: 700, y: 1230, r: 600, color: K.blue, o: 0.25}} />
+    <Tag text="Psychologists call it" color={K.blue} top={150} />
+    <Hero top={250} lines={[{text: 'Bedtime', size: 150}, {text: 'procrasti-', size: 136, color: K.coral}, {text: 'nation', size: 150, color: K.coral}]} />
+    <Body top={760} text="Going to bed later than you planned, when nothing is stopping you." />
+    <Source top={900} text="Kroese et al., 2014 · Frontiers in Psychology" />
+    <svg width={1080} height={1920} style={{position: 'absolute', inset: 0}}>
+      <circle cx={540} cy={1250} r={250} fill={K.cream} stroke={INK} strokeWidth={10} />
+      <clipPath id="badge"><circle cx={540} cy={1250} r={245} /></clipPath>
+      <g clipPath="url(#badge)">
+        <rect x={290} y={1000} width={500} height={500} fill="#f3d9a4" />
+        <MikaHead x={540} y={1300} s={1.55} e="guilty" id="wy" />
+      </g>
+      <circle cx={540} cy={1250} r={250} fill="none" stroke={INK} strokeWidth={10} />
+    </svg>
+  </AbsoluteFill>
+);
+
 export const KineticStyle: React.FC = () => {
   const f = useCurrentFrame();
-  return [<Hook key="h" />, <Problem key="p" />, <Why key="w" />, <Fix key="f" />][Math.min(3, f)];
+  return [<Hook key="h" />, <Problem key="p" />, <Why key="w" />, <Fix key="f" />, <HookWithMika key="hm" />, <WhyWithMika key="wm" />][Math.min(5, f)];
 };

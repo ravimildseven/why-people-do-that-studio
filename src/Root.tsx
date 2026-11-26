@@ -17,7 +17,7 @@ const KStyle = () => <WithFonts C={KineticStyle} />;
 
 export const Root: React.FC = () => (
   <>
-    <Composition id="KineticStyle" component={KStyle} durationInFrames={4} fps={30} width={1080} height={1920} />
+    <Composition id="KineticStyle" component={KStyle} durationInFrames={6} fps={30} width={1080} height={1920} />
     <Composition id="S01v3-Bedtime" component={S01v3} durationInFrames={S01V3_DURATION} fps={30} width={1080} height={1920} />
     <Composition id="S01v2-Bedtime" component={S01v2} durationInFrames={S01V2_DURATION} fps={30} width={1080} height={1920} />
     <Composition id="S01-Bedtime" component={S01} durationInFrames={S01_DURATION} fps={30} width={1080} height={1920} />
