@@ -249,9 +249,9 @@ const Bed: React.FC<{L: BedroomLayout}> = ({L}) => {
   );
 };
 
-const Shelf: React.FC<{L: BedroomLayout}> = ({L}) => {
+const Shelf: React.FC<{L: BedroomLayout; phone: boolean; buzz: number}> = ({L, phone, buzz}) => {
   const x = L.shelfX;
-  const y = L.wide ? -820 : -900;
+  const y = L.wide ? -820 : -770; // portrait: kept below the hook card
   const w = 280;
   return (
     <g>
@@ -274,6 +274,17 @@ const Shelf: React.FC<{L: BedroomLayout}> = ({L}) => {
         <rect key={i} x={x - 4 + (dx as number)} y={y - (h as number)} width={24} height={h as number} rx={3} fill={c as string} {...o(4)} />
       ))}
       <rect x={x + 76} y={y - 92} width={24} height={92} rx={3} fill="#6e5a7a" {...o(4)} transform={`rotate(14 ${x + 100} ${y})`} />
+      {/* phone charging upright in front of the books, cable to an outlet below; buzz = shake + glow */}
+      {phone && (
+        <g transform={`translate(${x + 34 + Math.sin(buzz * 60) * 4 * buzz} ${y})`}>
+          <path d="M 0 0 Q 4 60 -20 110 L -20 150" fill="none" stroke={INK} strokeWidth={5} />
+          <rect x={-34} y={140} width={28} height={36} rx={5} fill="#e9dcc3" stroke={INK} strokeWidth={4} />
+          {buzz > 0 && <circle cx={0} cy={-46} r={70} fill="#9fd3ff" opacity={0.35 * buzz} />}
+          <rect x={-22} y={-84} width={44} height={80} rx={9} fill="#20232b" stroke={INK} strokeWidth={5} />
+          <rect x={-15} y={-74} width={30} height={60} rx={5} fill={buzz > 0 ? '#9fd3ff' : '#2b3044'} opacity={buzz > 0 ? 0.6 + 0.4 * buzz : 1} />
+          {buzz > 0 && [-1, 1].map((s) => <path key={s} d={`M ${s * 34} -66 Q ${s * 44} -44 ${s * 34} -22 M ${s * 46} -72 Q ${s * 58} -44 ${s * 46} -16`} fill="none" stroke={INK} strokeWidth={4} strokeLinecap="round" opacity={buzz} />)}
+        </g>
+      )}
       {/* tiny framed picture, image only */}
       <g transform={`translate(${x + 104} ${y - 60})`}>
         <rect x={-6} y={-30} width={46} height={60} rx={3} fill="#e9dcc3" {...o(4)} />
@@ -371,7 +382,7 @@ const FairyLights: React.FC<{L: BedroomLayout; id: string}> = ({L, id}) => {
 };
 
 // Everything behind the characters.
-export const BedroomBack: React.FC<{L: BedroomLayout; id: string; lampOn?: number; phoneOnStand?: boolean; morning?: number}> = ({L, id, lampOn = 1, phoneOnStand = false, morning = 0}) => {
+export const BedroomBack: React.FC<{L: BedroomLayout; id: string; lampOn?: number; phoneOnStand?: boolean; phoneOnShelf?: boolean; phoneBuzz?: number; morning?: number}> = ({L, id, lampOn = 1, phoneOnStand = false, phoneOnShelf = false, phoneBuzz = 0, morning = 0}) => {
   const left = -L.hx - 10;
   const width = L.hx * 2 + 20;
   const lampX = L.nsX - 10;
@@ -423,7 +434,7 @@ export const BedroomBack: React.FC<{L: BedroomLayout; id: string; lampOn?: numbe
       <path d={`M ${L.winX - L.winW / 2} ${L.wide ? -660 : -700} L ${L.winX + L.winW / 2} ${L.wide ? -660 : -700} L ${L.winX + L.winW / 2 + 380} ${90} L ${L.winX - L.winW / 2 + 380} ${90} Z`} fill={`url(#${id}moonbeam)`} />
       <FairyLights L={L} id={id} />
       <Window L={L} id={id} morning={morning} />
-      <Shelf L={L} />
+      <Shelf L={L} phone={phoneOnShelf} buzz={phoneBuzz} />
       <Rug L={L} />
       <Bed L={L} />
       <Nightstand L={L} id={id} lampOn={lampOn} phone={phoneOnStand} />

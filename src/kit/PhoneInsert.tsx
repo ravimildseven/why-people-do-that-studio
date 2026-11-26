@@ -2,7 +2,7 @@ import React from 'react';
 import {Easing, interpolate} from 'remotion';
 import {INK, SCREEN, Look} from './Person';
 
-// Close-up insert: the character's hand holding a phone, thumb flicking through a feed.
+// Close-up insert: both hands holding a phone while the feed scrolls (a touch ripple shows the swipe).
 // The feed is abstract shapes only (no text, no logos, no real apps). Laid out from width/height.
 
 const TILE_COLORS = ['#e8735a', '#5b7a8a', '#c9a76a', '#7a4f78', '#3f8f86', '#a9805a', '#6a7eab'];
@@ -58,14 +58,10 @@ export const PhoneInsert: React.FC<{frame: number; W: number; H: number; look: L
           <rect x={sx} y={sy} width={sw} height={sh} rx={26} />
         </clipPath>
       </defs>
-      {/* her hoodie fills the background, drawstrings hanging */}
-      <rect width={W} height={H} fill={look.topColor} />
-      <rect width={W} height={H} fill="#1a1d33" opacity={0.35} />
-      {[-1, 1].map((s) => (
-        <g key={s}>
-          <path d={`M ${W / 2 + s * W * 0.38} ${-20} Q ${W / 2 + s * W * 0.42} ${H * 0.4} ${W / 2 + s * W * 0.36} ${H * 0.78}`} fill="none" stroke={INK} strokeWidth={34} strokeLinecap="round" />
-          <path d={`M ${W / 2 + s * W * 0.38} ${-20} Q ${W / 2 + s * W * 0.42} ${H * 0.4} ${W / 2 + s * W * 0.36} ${H * 0.78}`} fill="none" stroke={look.topAccent} strokeWidth={22} strokeLinecap="round" />
-        </g>
+      {/* dark bedroom behind the phone, fairy lights out of focus */}
+      <rect width={W} height={H} fill="#2a3150" />
+      {[0.12, 0.3, 0.55, 0.78, 0.92].map((fx, i) => (
+        <circle key={i} cx={W * fx} cy={H * (0.08 + (i % 2) * 0.05)} r={W * 0.06} fill="#ffe4a3" opacity={0.18} />
       ))}
       <circle cx={W / 2} cy={H * 0.51} r={W * 0.75} fill="url(#pi-glow)" />
       {/* phone */}
@@ -73,15 +69,20 @@ export const PhoneInsert: React.FC<{frame: number; W: number; H: number; look: L
       <rect x={sx} y={sy} width={sw} height={sh} rx={26} fill="#151826" />
       <g clipPath="url(#pi-screen)">{tiles}</g>
       <rect x={W / 2 - 50} y={py + pad * 0.6} width={100} height={18} rx={9} fill="#0e1018" />
-      {/* hand: fingers wrap the left edge, thumb on the screen */}
-      {[0, 1, 2].map((i) => (
-        <ellipse key={i} cx={px - 6} cy={py + ph * (0.5 + i * 0.12)} rx={46} ry={34} fill={look.skin} stroke={INK} strokeWidth={8} />
-      ))}
-      <path d={`M ${px - 80} ${py + ph * 1.1} Q ${px - 40} ${py + ph * 0.86} ${px + pw * 0.2} ${py + ph * 0.83} L ${px + pw * 0.62} ${py + ph * 0.86} Q ${px + pw * 0.9} ${py + ph * 0.95} ${px + pw * 0.85} ${py + ph * 1.2} Z`} fill={look.skin} stroke={INK} strokeWidth={8} strokeLinejoin="round" />
-      <g transform={`translate(0 ${-thumbLift * ph * 0.12})`}>
-        <path d={`M ${px + pw * 0.42} ${py + ph * 0.95} Q ${px + pw * 0.48} ${py + ph * 0.72} ${px + pw * 0.62} ${py + ph * 0.68} Q ${px + pw * 0.76} ${py + ph * 0.7} ${px + pw * 0.74} ${py + ph * 0.8} Q ${px + pw * 0.7} ${py + ph * 0.92} ${px + pw * 0.66} ${py + ph * 1.0} Z`} fill={look.skin} stroke={INK} strokeWidth={8} strokeLinejoin="round" />
-        <ellipse cx={px + pw * 0.645} cy={py + ph * 0.715} rx={pw * 0.055} ry={pw * 0.04} fill="#e9b89a" opacity={0.8} />
-      </g>
+      {/* touch ripple where the (unseen) finger swipes up the screen */}
+      <circle cx={W / 2 + sw * 0.12} cy={sy + sh * 0.72 - thumbLift * sh * 0.22} r={18 + thumbLift * 26} fill="none" stroke="#ffffff" strokeOpacity={0.55 * thumbLift} strokeWidth={6} />
+      {/* both hands grip the lower sides of the phone; sleeves run out of frame */}
+      {[-1, 1].map((side) => {
+        const hx = side < 0 ? px + pw * 0.02 : px + pw * 0.98;
+        const hy = py + ph * 0.8;
+        return (
+          <g key={side}>
+            <path d={`M ${hx} ${hy + 40} L ${W / 2 + side * W * 0.62} ${H * 1.05}`} stroke={INK} strokeWidth={pw * 0.36 + 16} strokeLinecap="round" />
+            <path d={`M ${hx} ${hy + 40} L ${W / 2 + side * W * 0.62} ${H * 1.05}`} stroke={look.topColor} strokeWidth={pw * 0.36} strokeLinecap="round" />
+            <ellipse cx={hx} cy={hy} rx={pw * 0.17} ry={pw * 0.22} fill={look.skin} stroke={INK} strokeWidth={8} />
+          </g>
+        );
+      })}
     </svg>
   );
 };

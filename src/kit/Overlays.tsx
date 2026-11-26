@@ -61,13 +61,13 @@ export const Caption: React.FC<{text: string; highlight?: string}> = ({text, hig
   </div>
 );
 
-export const FactCard: React.FC<{frame: number; title: string; body: string; source: string}> = ({frame, title, body, source}) => {
+export const FactCard: React.FC<{frame: number; title: string; body: string; source: string; accent?: string}> = ({frame, title, body, source, accent = MUSTARD}) => {
   const {fps} = useVideoConfig();
   const s = spring({frame, fps, config: {damping: 12, stiffness: 170}});
   return (
     <div style={{position: 'absolute', left: 64, right: 64, bottom: 452, transform: `scale(${0.5 + 0.5 * s}) rotate(${1.2 - 1.2 * s}deg)`, opacity: Math.min(1, s * 1.5)}}>
       <div style={{background: CREAM, border: `7px solid ${INK}`, borderRadius: 30, boxShadow: `10px 10px 0 ${INK}`, overflow: 'hidden'}}>
-        <div style={{background: MUSTARD, borderBottom: `6px solid ${INK}`, padding: '14px 28px 6px', fontFamily: 'Bangers', fontSize: 72, letterSpacing: 2, color: INK}}>
+        <div style={{background: accent, borderBottom: `6px solid ${INK}`, padding: '14px 28px 6px', fontFamily: 'Bangers', fontSize: 72, letterSpacing: 2, color: INK}}>
           {title}
         </div>
         <div style={{padding: '18px 30px 8px', fontFamily: 'Baloo', fontWeight: 700, fontSize: 50, lineHeight: 1.22, color: INK}}>{body}</div>
@@ -88,3 +88,16 @@ export const ClockChip: React.FC<{text: string; flip: number; top: number}> = ({
     {text}
   </div>
 );
+
+// Small time-jump tag ("3 HOURS EARLIER", "NEXT NIGHT"), pops in under the hook card.
+export const Sticker: React.FC<{frame: number; text: string}> = ({frame, text}) => {
+  const {fps} = useVideoConfig();
+  const s = spring({frame, fps, config: {damping: 11, stiffness: 200}});
+  return (
+    <div style={{position: 'absolute', left: 70, top: 470, transform: `rotate(-4deg) scale(${s})`, transformOrigin: 'left center'}}>
+      <div style={{background: MUSTARD, border: `6px solid ${INK}`, borderRadius: 16, boxShadow: `6px 6px 0 ${INK}`, padding: '8px 22px 2px', fontFamily: 'Bangers', fontSize: 64, letterSpacing: 2, color: INK}}>
+        {text}
+      </div>
+    </div>
+  );
+};

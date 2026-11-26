@@ -57,3 +57,35 @@ The palette is lifted about 1.5× from v1 so the night still reads on a phone.
 - v1: 28/100 (1 shot, no cuts). v2: 38/100. **Pace passes** (9 shots, median 1.9 s vs the reference's 2.4 s).
 - The remaining points are for matching the reference's exact cut frames and its daytime brightness.
   Both are deliberately not followed: the story has its own beats, and it happens at night.
+
+---
+
+# v3: problem → why → fix (Nov 26, 2026)
+
+Owner notes on v2: the phone close-up's thumb read badly (removed); the hook was weak; the story must state
+a problem, explain it, and give a fix. Composition: `S01v3-Bedtime`, 32 s, 11 shots.
+
+**Hook headline (frame 0 onward):** WHY YOU CAN'T STOP / SCROLLING AT NIGHT
+
+| Part | Shot | Frames | Beat | Line |
+|---|---|---|---|---|
+| HOOK | S1–S2 | 0–65 | 1:55 AM, dozing over the phone; head drops: bonk at f10; impact close-up | A1 "Ow." |
+| PROBLEM | S3 | 66–189 | "3 HOURS EARLIER" sticker, 11:15 PM, scrolling | A2 "Okay. Five more minutes. Then sleep." |
+| | S4 | 190–241 | phone close-up: both hands on the phone, feed scrolls, touch ripple (no thumb) | — |
+| | S5 | 242–321 | 12:40 AM | A3 "One more video. I've earned this." |
+| | S6 | 322–469 | 1:55 AM | A4 "My whole day belonged to everyone else. This is the only part that's mine." |
+| WHY | S7 | 470–609 | fact card: bedtime procrastination | — |
+| FIX | S8 | 610–769 | fix card: if–then plan; Mika thinking | A5 "Okay. New plan. If it's eleven, my phone charges across the room." |
+| | S9 | 770–879 | "NEXT NIGHT", 11:00 PM: phone charging on the far shelf buzzes; side-eye; lamp off | A6 "Nope." |
+| PAYOFF | S10–S11 | 880–959 | 7:00 AM, dawn, alarm; wakes happy and stretches; white flash, loops | A7 "Wait… I actually slept!" |
+
+## Fix card and its check
+**FIX: AN IF–THEN PLAN.** "If it's 11 PM, then my phone charges across the room." Plans like this help people stick to goals.
+*Gollwitzer & Sheeran, 2006 · review of 94 studies.*
+- Verified: Gollwitzer & Sheeran (2006), "Implementation intentions and goal achievement: a meta-analysis of
+  effects and processes", *Advances in Experimental Social Psychology* 38, 69–119. Across 94 independent tests,
+  implementation intentions had a medium-to-large effect (d = .65) on goal attainment.
+- The card claims only that general finding. A bedtime-specific trial exists (Valshtein, Oettingen & Gollwitzer, 2020,
+  *Psychology & Health* 35, 275–301, two randomised trials of mental contrasting + implementation intentions), but its
+  results could not be read in full from this environment, so it is **not** cited on screen.
+- "Charge the phone across the room" is the example plan; the card does not claim that this specific rule was tested.
