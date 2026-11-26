@@ -89,3 +89,24 @@ a problem, explain it, and give a fix. Composition: `S01v3-Bedtime`, 32 s, 11 sh
   *Psychology & Health* 35, 275–301, two randomised trials of mental contrasting + implementation intentions), but its
   results could not be read in full from this environment, so it is **not** cited on screen.
 - "Charge the phone across the room" is the example plan; the card does not claim that this specific rule was tested.
+
+---
+
+# v4: POV + kinetic type, with Mika as the face (Nov 26, 2026) (current)
+
+Owner: v1–v3 "not good enough"; approved the new design (style frames) with Mika kept as the recurring face, and a
+female narrator. Composition `S01v4-Kinetic`, 32 s, 7 scenes, narrator Kokoro `af_heart`, music bed made in code
+(`tools/music/bed.py`, original, no licence needed).
+
+| Scene | Frames | On screen | Narration |
+|---|---|---|---|
+| Hook | 0–131 | headline on screen from frame 0: WHY ARE YOU **STILL** SCROLLING? · tag "1:55 AM · Phone 4% · You 2%" · Mika's tired face lit by the phone | N1 "It's almost two a.m. You're exhausted. So why are you still scrolling?" |
+| Problem | 132–261 | "5 MORE MINUTES" · clock sweeps 11:15 → 1:55 · = 2 H 40 MIN | N2 "You said five more minutes. That was two hours and forty minutes ago." |
+| Why | 262–479 | BEDTIME PROCRASTINATION · definition word by word · source · Mika guilty badge | N3 "Psychologists call it bedtime procrastination: going to bed later than you planned, when nothing is stopping you." |
+| Why it feels good | 480–589 | a day bar: work, chores, everyone else, then "You" lights up · THE ONLY TIME THAT'S YOURS · Mika tired badge | N4 "And late at night can feel like the only time that's yours." |
+| Fix | 590–779 | MAKE AN IF–THEN PLAN · IF it's 11 PM, THEN my phone charges across the room · phone flies to the charger | N5 "The fix? Make an if, then plan. If it's eleven p.m., then my phone charges across the room." |
+| Evidence | 780–859 | 94 STUDIES (count-up) · line + source · Mika curious badge | N6 "Plans like this help people stick to their goals." |
+| Payoff | 860–955 | sunrise, 7:00 AM · Rested · TRY IT TONIGHT. · Mika happy; white flash, loops | N7 "So tonight, try it. Future you will thank you." |
+
+Fact checks: as v3. N4 is worded as a feeling ("can feel like"), not a research claim, because the
+"no free time" explanation is popular but not well studied.

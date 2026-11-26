@@ -41,8 +41,12 @@ each with **one verified psychology fact**. Read `README.md`, `CHARACTER-GUIDE.m
 
 ## Status (keep current)
 - **Done:** character rig + cast of 3, bedroom set, overlays, free TTS pipeline, Short S01 "Exhausted… but
-  still awake?" (bedtime procrastination) in v1 (single shot), v2 (`S01v2-Bedtime`, fast-cut) and v3 (`S01v3-Bedtime`: hook → problem → why → fix → payoff; current).
-- **Open (owner):** pick Mika's voice; review S01; choose the next topics.
+  still awake?" (bedtime procrastination) in v1 (single shot), v2 (`S01v2-Bedtime`, fast-cut) v3 (`S01v3-Bedtime`, puppet play) and **v4 (`S01v4-Kinetic`, current format)**.
+- **Open (owner):** review S01 v4; choose the next topics.
+- **Format (owner-approved, Nov 26): POV + kinetic type with Mika as the face.** Big animated words (Inter Display,
+  `src/kinetic/Design.tsx`) carry the story; graphics show the numbers; Mika appears only as close-ups and reaction
+  badges (head only). One female narrator (Kokoro `af_heart`), music bed from `tools/music/bed.py`. The puppet-play
+  format (v1–v3) was rejected: stiff, slideshow-like.
 - **Story rule (owner, Nov 26):** every Short states a problem, explains why (fact card), and gives a fix the viewer can
   use (fix card, also sourced). The hook is the most striking moment, shown first, with the headline on screen from frame 0.
 - **Pacing rule (from dissect, Nov 26):** cut every ~2–5 s, calm 5 s opening, at least one cutaway insert, a twist
