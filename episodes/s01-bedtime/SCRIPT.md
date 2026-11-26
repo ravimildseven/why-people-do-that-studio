@@ -29,3 +29,31 @@ Going to bed later than you planned, when nothing is stopping you.
 - The "revenge" explanation (staying up because the day left no free time) is widespread in popular
   sources (Sleep Foundation, Healthline), but there is no strong study behind it. So it is **Mika's own
   line (L3), not a claim on the fact card.**
+
+---
+
+# v2: fast-cut rebuild (Nov 26, 2026)
+
+Same topic, cast, set and fact. Rebuilt to the pacing of a reference Short measured with dissect
+(structure only: shot rhythm, a calm 5 s opening, a cutaway insert, a twist at the end, a loop).
+None of the reference's jokes, characters or look are used. Composition: `S01v2-Bedtime`, 30 s.
+
+| Shot | Frames (30 fps) | Framing | Beat | Line |
+|---|---|---|---|---|
+| S1 | 0–149 | wide | 11:15 PM, scrolling in bed | L1 "Okay. Five more minutes. Then sleep." |
+| S2 | 150–206 | phone insert | thumb flicks through the feed (shapes only, no text) | — |
+| S3 | 207–287 | medium | 12:40 AM, tired | L2 "One more video. I've earned this." |
+| S4 | 288–439 | close | 1:55 AM | L3 "My whole day belonged to everyone else. This is the only part that's mine." |
+| S5 | 440–491 | medium | eyes close, head drops onto the phone: bonk | — |
+| S6 | 492–527 | impact close | shocked, impact lines | L4 "Ow." |
+| S7 | 528–659 | medium | fact card (bedtime procrastination) | — |
+| S8 | 660–839 | wide | phone onto the nightstand, lamp off, falls asleep smiling | L5 "Fine. Tomorrow I take my break at lunch. Not at two a.m." |
+| S9 | 840–857 | wide | 7:00 AM, dawn in the window, alarm, still asleep | — |
+| S10 | 858–897 | close | eyes snap open; last frame is a white flash, then it loops to 11:15 PM | L6 "Wait… it's morning?!" |
+
+The palette is lifted about 1.5× from v1 so the night still reads on a phone.
+
+## dissect check vs the reference
+- v1: 28/100 (1 shot, no cuts). v2: 38/100. **Pace passes** (9 shots, median 1.9 s vs the reference's 2.4 s).
+- The remaining points are for matching the reference's exact cut frames and its daytime brightness.
+  Both are deliberately not followed: the story has its own beats, and it happens at night.

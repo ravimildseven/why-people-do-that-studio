@@ -377,9 +377,11 @@ export type PersonProps = {
   blink?: number;
   /** explicit arm angles, e.g. interpolated between two poses */
   arms?: {L: Arm; R: Arm};
+  /** 0..1 head drops forward (dozing off); the head slides down toward the chest */
+  nod?: number;
 };
 
-export const Person: React.FC<PersonProps> = ({look: L, expression = 'neutral', pose = 'rest', idPrefix, sit, headOnly, silhouette, talk = 0, blink = 0, arms}) => {
+export const Person: React.FC<PersonProps> = ({look: L, expression = 'neutral', pose = 'rest', idPrefix, sit, headOnly, silhouette, talk = 0, blink = 0, arms, nod = 0}) => {
   const H = L.head ?? DEFAULT_HEAD;
   const f = FACES[expression];
   const P = arms ?? POSES[pose];
@@ -507,7 +509,7 @@ export const Person: React.FC<PersonProps> = ({look: L, expression = 'neutral', 
           <g transform={`translate(0 ${dy})`}>{upper}</g>
           {knees}
           <g transform={`translate(0 ${dy})`}>
-            {head}
+            <g transform={`translate(0 ${nod * 40}) rotate(${nod * 4} 0 -360)`}>{head}</g>
             <Sleeve p={AL} L={L} />
             <Sleeve p={AR} L={L} />
             <Hand side={-1} arm={P.L} x={AL.hx} y={AL.hy} ang={AL.ang} skin={L.skin} skinShade={L.skinShade} />

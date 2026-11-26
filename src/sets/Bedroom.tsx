@@ -7,12 +7,12 @@ import {INK, SEAT_HIP} from '../kit/Person';
 // y up is negative, 1 unit = 1 unit of the character rig. The layout adapts to 9:16 or 16:9.
 
 export const NIGHT = {
-  wallTop: '#242a41',
-  wallBottom: '#323a58',
-  wallDot: '#3b4466',
-  skirting: '#1f2436',
-  floor: '#463d4b',
-  floorLine: '#3a3240',
+  wallTop: '#36405f',
+  wallBottom: '#48537a',
+  wallDot: '#525d86',
+  skirting: '#2c3350',
+  floor: '#5f5464',
+  floorLine: '#4e4454',
   wood: '#6b5248',
   woodDark: '#563f37',
   headboard: '#5a4640',
@@ -24,8 +24,8 @@ export const NIGHT = {
   pillow: '#d9d2c3',
   curtain: '#5d4b6b',
   curtainShade: '#4a3b57',
-  skyTop: '#151a33',
-  skyBottom: '#2b3566',
+  skyTop: '#1f2747',
+  skyBottom: '#3a4680',
   city: '#12162a',
   moon: '#efefe7',
   lit: '#f5c65a',
@@ -81,7 +81,7 @@ export function bedroomLayout(W: number, H: number): BedroomLayout {
 const o = (w = 6) => ({stroke: INK, strokeWidth: w, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const});
 const WALL_BASE = -70;
 
-const Window: React.FC<{L: BedroomLayout; id: string}> = ({L, id}) => {
+const Window: React.FC<{L: BedroomLayout; id: string; morning: number}> = ({L, id, morning}) => {
   const x0 = L.winX - L.winW / 2;
   const x1 = L.winX + L.winW / 2;
   const y0 = L.wide ? -1080 : -1060;
@@ -98,6 +98,10 @@ const Window: React.FC<{L: BedroomLayout; id: string}> = ({L, id}) => {
           <stop offset="0" stopColor={NIGHT.skyTop} />
           <stop offset="1" stopColor={NIGHT.skyBottom} />
         </linearGradient>
+        <linearGradient id={id + 'dawn'} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#8fc4ea" />
+          <stop offset="1" stopColor="#ffd2a1" />
+        </linearGradient>
         <clipPath id={id + 'win'}>
           <rect x={x0} y={y0} width={w} height={hgt} />
         </clipPath>
@@ -110,6 +114,12 @@ const Window: React.FC<{L: BedroomLayout; id: string}> = ({L, id}) => {
         <circle cx={x0 + w * 0.74} cy={y0 + hgt * 0.22} r={70} fill={NIGHT.moon} opacity={0.1} />
         <circle cx={x0 + w * 0.74} cy={y0 + hgt * 0.22} r={36} fill={NIGHT.moon} />
         <circle cx={x0 + w * 0.74 + 16} cy={y0 + hgt * 0.22 - 8} r={32} fill={NIGHT.skyTop} />
+        {morning > 0 && (
+          <g opacity={morning}>
+            <rect x={x0} y={y0} width={w} height={hgt} fill={`url(#${id}dawn)`} />
+            <circle cx={x0 + w * 0.3} cy={y1 - hgt * 0.18} r={34} fill="#ffe08a" />
+          </g>
+        )}
         {buildings.map(([fx, fw, fh], i) => {
           const bx = x0 + fx * w;
           const bw = fw * w;
@@ -361,7 +371,7 @@ const FairyLights: React.FC<{L: BedroomLayout; id: string}> = ({L, id}) => {
 };
 
 // Everything behind the characters.
-export const BedroomBack: React.FC<{L: BedroomLayout; id: string; lampOn?: number; phoneOnStand?: boolean}> = ({L, id, lampOn = 1, phoneOnStand = false}) => {
+export const BedroomBack: React.FC<{L: BedroomLayout; id: string; lampOn?: number; phoneOnStand?: boolean; morning?: number}> = ({L, id, lampOn = 1, phoneOnStand = false, morning = 0}) => {
   const left = -L.hx - 10;
   const width = L.hx * 2 + 20;
   const lampX = L.nsX - 10;
@@ -412,7 +422,7 @@ export const BedroomBack: React.FC<{L: BedroomLayout; id: string; lampOn?: numbe
       <circle cx={lampX} cy={lampY} r={L.wide ? 620 : 520} fill={`url(#${id}lamp)`} opacity={lampOn} />
       <path d={`M ${L.winX - L.winW / 2} ${L.wide ? -660 : -700} L ${L.winX + L.winW / 2} ${L.wide ? -660 : -700} L ${L.winX + L.winW / 2 + 380} ${90} L ${L.winX - L.winW / 2 + 380} ${90} Z`} fill={`url(#${id}moonbeam)`} />
       <FairyLights L={L} id={id} />
-      <Window L={L} id={id} />
+      <Window L={L} id={id} morning={morning} />
       <Shelf L={L} />
       <Rug L={L} />
       <Bed L={L} />
@@ -424,15 +434,16 @@ export const BedroomBack: React.FC<{L: BedroomLayout; id: string; lampOn?: numbe
 };
 
 // In front of the characters: soft lamp bloom + vignette (screen space).
-export const BedroomFront: React.FC<{L: BedroomLayout; id: string; dark?: number}> = ({L, id, dark = 0}) => (
+export const BedroomFront: React.FC<{L: BedroomLayout; id: string; dark?: number; morning?: number}> = ({L, id, dark = 0, morning = 0}) => (
   <g>
     <defs>
       <radialGradient id={id + 'vig'} cx="0.5" cy="0.45" r="0.75">
         <stop offset="0.55" stopColor="#000" stopOpacity={0} />
-        <stop offset="1" stopColor="#000" stopOpacity={0.45} />
+        <stop offset="1" stopColor="#000" stopOpacity={0.3} />
       </radialGradient>
     </defs>
-    <rect x={0} y={0} width={L.W} height={L.H} fill="#0b1026" opacity={dark * 0.26} />
+    <rect x={0} y={0} width={L.W} height={L.H} fill="#0b1026" opacity={dark * 0.22 * (1 - morning)} />
+    <rect x={0} y={0} width={L.W} height={L.H} fill="#ffd9a0" opacity={morning * 0.22} />
     <rect x={0} y={0} width={L.W} height={L.H} fill={`url(#${id}vig)`} />
   </g>
 );

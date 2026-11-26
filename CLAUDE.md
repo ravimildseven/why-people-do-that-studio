@@ -41,6 +41,8 @@ each with **one verified psychology fact**. Read `README.md`, `CHARACTER-GUIDE.m
 
 ## Status (keep current)
 - **Done:** character rig + cast of 3, bedroom set, overlays, free TTS pipeline, Short S01 "Exhausted… but
-  still awake?" (bedtime procrastination).
+  still awake?" (bedtime procrastination) in v1 (single shot) and v2 (`S01v2-Bedtime`, 10 shots, fast-cut, twist + loop).
 - **Open (owner):** pick Mika's voice; review S01; choose the next topics.
+- **Pacing rule (from dissect, Nov 26):** cut every ~2–5 s, calm 5 s opening, at least one cutaway insert, a twist
+  in the last seconds, loop back to the opening. Keep the channel's content: everyday behaviour + one verified fact.
 - **Open (code):** music bed; more sets (kitchen, doorway/hallway, office); side view and walk cycle; long-form template.
